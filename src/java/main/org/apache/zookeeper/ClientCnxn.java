@@ -164,6 +164,8 @@ public class ClientCnxn {
 
     private byte sessionPasswd[] = new byte[16];
 
+    private Retrier retrier = new RandomRetrier();
+
     /**
      * If true, the connection is allowed to go to r-o mode. This field's value
      * is sent, besides other data, during session creation handshake. If the
@@ -1048,7 +1050,7 @@ public class ClientCnxn {
                     if (!clientCnxnSocket.isConnected()) {
                         if(!isFirstConnect){
                             try {
-                                Thread.sleep(r.nextInt(1000));
+                                Thread.sleep(retrier.getNextWaitMs());
                             } catch (InterruptedException e) {
                                 LOG.warn("Unexpected exception", e);
                             }
@@ -1059,6 +1061,7 @@ public class ClientCnxn {
                         }
                         startConnect();
                         clientCnxnSocket.updateLastSendAndHeard();
+                        retrier.reset();
                     }
 
                     if (state.isConnected()) {
@@ -1472,5 +1475,9 @@ public class ClientCnxn {
 
     States getState() {
         return state;
+    }
+
+    public void setRetrier(Retrier retrier) {
+        this.retrier = retrier;
     }
 }

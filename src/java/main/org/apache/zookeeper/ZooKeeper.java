@@ -644,8 +644,19 @@ public class ZooKeeper {
     }
 
     /**
-     * Specify the default watcher for the connection (overrides the one
-     * specified during construction).
+     * Set a {@link Retrier} for the connection, to be used in connection retries.
+     *
+     * This method is NOT thread safe
+     *
+     * @param retrier
+     */
+    public void setRetrier(Retrier retrier) {
+        cnxn.setRetrier(retrier);
+    }
+
+    /**
+     * Specify the default watcher for the connection (overrides the one specified
+     * during construction).
      *
      * @param watcher
      */
